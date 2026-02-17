@@ -1,13 +1,13 @@
 export function generateOrderCode() {
-    const prefix = 'VLO';
-    const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const numeros = '0123456789';
-   
-    const randomChars = (conjunto, tamanho) =>
-      Array.from({ length: tamanho }, () => conjunto[Math.floor(Math.random() * conjunto.length)]).join('');
-  
-    const parteNumeros = randomChars(numeros, 3);
-    const parteLetras = randomChars(letras, 3);
-  
-    return `${prefix}-${parteNumeros}${parteLetras}`;
+  const prefix = 'VLO'
+
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
+  let randomPart = ''
+
+  for (let i = 0; i < 6; i++) {
+      const randomIndex = Math.floor(Math.random() * chars.length)
+      randomPart += chars[randomIndex]
   }
+
+  return `${prefix}-${randomPart}`
+}

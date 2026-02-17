@@ -13,13 +13,14 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
 
-//Tempo máximo para cada teste completo (60 segundos)
-  timeout: 60000,
+  // Tempo máximo para cada teste completo (3o segundo é o padrão)
+  timeout: 60_000,
 
-  // Tempo máximo para assertions (5 segundos)
+  // Tempo máximo para assertions (toBeVisible(), toHaveText()) 5 segundos
   expect: {
-    timeout: 5000, // não vale a pena aumentar pois os testes podem ficar lentos no tempo de execução, vale a pena usar o time explicito
+    timeout: 5_000 // não vale a pena aumentar porque o teste pode ficar lento no tempo de execução, vale a pena usar o time explicito
   },
+
 
   testDir: './playwright/e2e',
   /* Run tests in files in parallel */
@@ -34,23 +35,19 @@ export default defineConfig({
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
+    /* Base URL to use in actions like `await page.goto('/')`. */
+    baseURL: 'http://localhost:5173',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'retain-on-failure', // Para guardar o trace de todos os testes que falham
-    //trace: 'on',' // Para guardar o trace de todos os testes
-    //trace: 'off', // Para não guardar o trace de todos os testes
+    trace: 'on',
 
-    // Tempo máximo para interativas (ex: click(), fill(), etc)
-    // Quando o valor é 0, herda o limite do timeout global
-    actionTimeout: 5000, // Tempo máximo para actions (10 segundos)
+    // Tempo máximo para ações interativas como click(), fill()
+    // Quando o valor é 0, herda o limite do timeout geral do teste
+    actionTimeout: 5_000,
 
-    //Tempo máximo para navegação (ex: goto(), navigate(), waitForURL(), etc)
-    // Quando o valor é 0, herda o limite do timeout global
-    navigationTimeout: 10000, // Tempo máximo para navegação (10 segundos)
-
-
+    // Tempo máximo para navegações como goto(), waitForURL()
+    // Quando o valor é 0, herda o limite do timeout geral do teste
+    navigationTimeout: 10_000
   },
 
   /* Configure projects for major browsers */
