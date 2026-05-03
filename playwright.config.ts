@@ -54,7 +54,11 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Headed localmente (prompt QA); em CI permanece headless por padrão do runner
+        headless: !!process.env.CI,
+      },
     },
 
     // {
