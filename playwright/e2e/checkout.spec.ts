@@ -68,11 +68,11 @@ test.describe('Checkout', () => {
   test.describe('Pagamento e Confirmação', () => {
     const cashPaymentOrder = {
       customer: {
-        name: 'Mariana',
-        lastname: 'Costa',
-        email: 'mariana.costa@velo.dev',
-        phone: '(11) 98888-7777',
-        document: '529.982.247-25',
+        name: 'Jedilson',
+        lastname: 'Silva',
+        email: 'jedilson.silva@velo.dev',
+        phone: '(11) 94444-2222',
+        document: '779.239.860-96',
         store: 'Velô Paulista - Av. Paulista, 1000',
       },
       expectedTotal: 'R$ 40.000,00',
