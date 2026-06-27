@@ -1,355 +1,288 @@
-# Casos de Teste - Velô Sprint (Configurador de Veículo Elétrico)
+# Documento de Casos de Testes - Velô Sprint
 
-Este documento contém os casos de teste funcionais criados após uma análise completa do código do sistema Velô Sprint, cobrindo os módulos: Landing Page, Configurador de Veículo, Checkout/Pedido, Análise de Crédito Automática, Confirmação e Consulta de Pedidos.
+Este documento contém os casos de teste funcionais para o sistema Velô Sprint, cobrindo os módulos de Landing Page, Configurador de Veículo, Checkout/Pedido, Análise de Crédito, Confirmação e Consulta de Pedidos, para o perfil Cliente.
 
 ---
 
-### CT01 - Acesso e Navegação da Landing Page
+### CT01 - Acesso e Navegação na Landing Page
 
 #### Objetivo
-Validar o carregamento da Landing Page e a transição para o módulo de configuração.
+Garantir que o Cliente consegue acessar a página inicial, visualizar as informações do Velô Sprint e ser redirecionado para o Configurador.
 
 #### Pré-Condições
-- O sistema deve estar online.
+- O sistema deve estar acessível na URL base.
 
 #### Passos
 
 | Id | Ação | Resultado Esperado |
 |----|------|--------------------|
-| 1 | Acessar a URL raiz do sistema. | A Landing Page é exibida corretamente com as informações do veículo Velô Sprint. |
-| 2 | Clicar no botão para iniciar a configuração. | O sistema redireciona o usuário para a tela `/configure` (Configurador de Veículo). |
+| 1  | Acessar a URL base do sistema | A Landing Page é carregada com sucesso exibindo o Hero, Especificações, FAQ e CTA. |
+| 2  | Clicar no botão para configurar ou reservar o veículo | O sistema deve redirecionar o Cliente para a página do Configurador (`/configure`). |
 
 #### Resultados Esperados
-- O usuário consegue iniciar o fluxo de compra sem erros.
+- O sistema apresenta as informações corretamente e navega para a página de configuração ao ser acionado o CTA.
 
 #### Critérios de Aceitação
-- Elementos visuais da Landing Page carregam corretamente.
-- O redirecionamento de rotas funciona.
+- A página carrega sem erros visuais.
+- O redirecionamento para o configurador (`/configure`) funciona.
 
 ---
 
-### CT02 - Configuração do Veículo - Precificação Base
+### CT02 - Configuração do Veículo (Cores e Rodas) e Cálculo do Preço Base
 
 #### Objetivo
-Validar que o preço base do veículo (R$ 40.000) é mantido caso não sejam selecionados itens adicionais tarifados (ex: rodas "Aero" não possuem custo extra).
+Validar se as escolhas de cores e rodas ("Sport") refletem corretamente no preço final exibido.
 
 #### Pré-Condições
-- Usuário na tela de Configuração (`/configure`).
+- Estar na página do Configurador (`/configure`).
+- Preço base inicial deve ser de R$ 40.000,00 (Cor padrão + Rodas "Aero").
 
 #### Passos
 
 | Id | Ação | Resultado Esperado |
 |----|------|--------------------|
-| 1 | Verificar o preço inicial exibido. | O valor total exibe R$ 40.000,00. |
-| 2 | Alterar cor exterior e interior. | O valor total permanece R$ 40.000,00 (cores não alteram preço). |
-| 3 | Manter as rodas padrão "Aero". | O valor total permanece R$ 40.000,00. |
-| 4 | Clicar em "Avançar". | O sistema direciona para o Checkout (`/order`) com Total = R$ 40.000,00. |
+| 1  | Verificar o preço inicial de venda | O preço de venda deve ser R$ 40.000,00. |
+| 2  | Selecionar uma cor exterior diferente ("Midnight Black" ou "Lunar White") | A cor do veículo no preview é alterada, mas o preço permanece R$ 40.000,00. |
+| 3  | Selecionar a opção de roda "Sport Wheels" | A roda do veículo no preview é alterada e o preço total é atualizado com acréscimo de R$ 2.000,00 (Total: R$ 42.000,00). |
+| 4  | Selecionar novamente a roda "Aero Wheels" | O preço total é decrementado em R$ 2.000,00, voltando para R$ 40.000,00. |
 
 #### Resultados Esperados
-- O sistema preserva o valor base nas configurações padrões.
+- O preço dinâmico do veículo deve ser atualizado instantaneamente apenas ao alterar a roda para "Sport".
 
 #### Critérios de Aceitação
-- Cores exteriores e interiores não podem impactar o subtotal.
+- Rodas "Sport" devem custar exatamente +R$ 2.000.
+- Trocar apenas a cor do exterior/interior não altera o preço base.
 
 ---
 
-### CT03 - Configuração do Veículo - Precificação Dinâmica (Opcionais)
+### CT03 - Configuração do Veículo (Adição de Opcionais) e Cálculo de Preço
 
 #### Objetivo
-Validar a soma e subtração dos itens opcionais ao valor base do carro conforme as regras de negócio.
+Validar se a seleção de opcionais ("Precision Park" e "Flux Capacitor") atualiza dinamicamente o preço do veículo.
 
 #### Pré-Condições
-- Usuário na tela de Configuração.
-- Valor inicial: R$ 40.000.
+- Estar na página do Configurador.
+- Veículo sem opcionais selecionados (Preço R$: 40.000,00).
 
 #### Passos
 
 | Id | Ação | Resultado Esperado |
 |----|------|--------------------|
-| 1 | Selecionar Rodas "Sport". | O valor exibido atualiza para R$ 42.000,00 (+ R$ 2.000). |
-| 2 | Marcar o opcional "Precision Park". | O valor exibido atualiza para R$ 47.500,00 (+ R$ 5.500). |
-| 3 | Marcar o opcional "Flux Capacitor". | O valor exibido atualiza para R$ 52.500,00 (+ R$ 5.000). |
-| 4 | Desmarcar as Rodas "Sport" (voltar para "Aero"). | O valor exibido atualiza para R$ 50.500,00 (- R$ 2.000). |
+| 1  | Marcar o checkbox do opcional "Precision Park" | O preço de venda deve ser acrescido de R$ 5.500,00 (Total temporário: R$ 45.500,00). |
+| 2  | Marcar o checkbox do opcional "Flux Capacitor" | O preço de venda deve ser acrescido de R$ 5.000,00 (Total temporário: R$ 50.500,00). |
+| 3  | Desmarcar os checkboxes dos opcionais | O preço total deve subtrair os valores respectivos e voltar a R$ 40.000,00. |
+| 4  | Clicar no botão "Monte o Seu" (Checkout) | O usuário é redirecionado para a página de checkout (`/order`) com os valores persistidos. |
 
 #### Resultados Esperados
-- O cálculo do preço responde em tempo real à interação do usuário.
+- O preço total acompanha de forma exata a marcação e desmarcação dos opcionais.
+- O redirecionamento leva a configuração e o preço corretos para o Checkout.
 
 #### Critérios de Aceitação
-- Rodas "Sport" custam R$ 2.000.
-- "Precision Park" custa R$ 5.500.
-- "Flux Capacitor" custa R$ 5.000.
+- O opcional "Precision Park" custa +R$ 5.500 e "Flux Capacitor" custa +R$ 5.000.
 
 ---
 
-### CT04 - Pagamento À Vista (Bypass de Crédito)
+### CT04 - Checkout - Validação de Campos Obrigatórios e Dados Inválidos
 
 #### Objetivo
-Validar que a escolha do método de pagamento "À Vista" ignora a análise de crédito e aprova o pedido automaticamente.
+Validar os critérios de obrigatoriedade dos campos de dados pessoais no Checkout.
 
 #### Pré-Condições
-- Usuário na tela de Checkout (`/order`).
-- Dados pessoais preenchidos corretamente.
+- O cliente configurou o carro e está na página de Checkout (`/order`).
 
 #### Passos
 
 | Id | Ação | Resultado Esperado |
 |----|------|--------------------|
-| 1 | Selecionar o botão de pagamento "À Vista". | A opção "À Vista" fica destacada. Campos de entrada/financiamento são ocultados. |
-| 2 | Clicar em "Confirmar Pedido". | O sistema finaliza a compra sem requisição à API de crédito. |
-| 3 | Verificar o redirecionamento. | O usuário é levado à tela de Sucesso com status "APROVADO". |
+| 1  | Deixar todos os campos do formulário em branco e clicar em "Confirmar Pedido" | O sistema não avança e exibe mensagens de erro sob os campos (Nome, Sobrenome, Email, Tel, CPF, Loja, Termos). |
+| 2  | Inserir apenas 1 letra no campo "Nome" e "Sobrenome" e confirmar | O sistema exibe erro: "Nome deve ter pelo menos 2 caracteres". |
+| 3  | Inserir um e-mail sem formato válido (ex: `cliente@.com`) e confirmar | O sistema exibe erro: "Email inválido". |
+| 4  | Inserir CPF incompleto ou inválido e confirmar | O sistema exibe erro de "CPF inválido". |
+| 5  | Preencher todos os campos corretamente, mas não marcar "Li e aceito os Termos" | O sistema exibe erro: "Aceite os termos". |
 
 #### Resultados Esperados
-- Pagamentos à vista não passam por bloqueio de Score de crédito.
+- Nenhuma submissão real é feita se o formulário apresentar erros de validação nos dados fornecidos pelo cliente.
 
 #### Critérios de Aceitação
-- O payload de criação de pedido é enviado com `paymentMethod: 'avista'` e status de APROVADO automático.
+- Nome e Sobrenome devem exigir mínimo de 2 caracteres.
+- Telefone e CPF exigem formato e quantidade mínima de caracteres completados (máscara preenchida).
+- O checkbox de termos deve ser obrigatoriamente marcado.
 
 ---
 
-### CT05 - Simulação de Financiamento - Cálculo de Juros Compostos
+### CT05 - Checkout e Confirmação - Pagamento à Vista (Fluxo Feliz)
 
 #### Objetivo
-Validar se o valor da prestação do financiamento (travado em 12x) respeita a regra de 2% de juros compostos ao mês sobre o valor a ser financiado.
+Validar a criação de um pedido bem-sucedido com pagamento à vista.
 
 #### Pré-Condições
-- Usuário no Checkout.
-- Valor total do carro configurado = R$ 40.000.
+- Estar na rota de Checkout com um carro de configuração básica (R$ 40.000,00).
+- Dados pessoais preenchidos e válidos.
 
 #### Passos
 
 | Id | Ação | Resultado Esperado |
 |----|------|--------------------|
-| 1 | Selecionar "Financiamento". | O formulário exibe o campo "Valor da Entrada". |
-| 2 | Digitar R$ 10.000 no campo de entrada. | O sistema calcula o saldo devedor = R$ 30.000. |
-| 3 | Verificar o valor das parcelas exibidas (12x). | O valor deve ser calculado rigorosamente pela fórmula de juros compostos (Atenção: Atualmente pode ser detectado um bug na UI que aplica taxa simples em `pages/Order.tsx`). |
+| 1  | Preencher o formulário com dados válidos e selecionar a loja | Os campos não apresentam erros. |
+| 2  | Selecionar a aba "À Vista" na Forma de Pagamento | O valor total de "Resumo" e "À Vista" exibem R$ 40.000,00. |
+| 3  | Marcar o aceite dos termos de uso e clicar em "Confirmar Pedido" | O botão mostra status de carregamento e o pedido é direcionado para a página de Confirmação (`/success`). |
+| 4  | Verificar a página de Confirmação | A página exibe "Pedido Aprovado!", gerando um número de pedido e informações do cliente e resumo. |
 
 #### Resultados Esperados
-- O sistema calcula e exibe corretamente o valor financiado e as parcelas com 2% de juros compostos a.m. 
+- Pedido à vista é criado imediatamente com status de `APROVADO`.
 
 #### Critérios de Aceitação
-- Taxa mensal: 2%.
-- Prazo fixo: 12 meses.
-- Fórmula matemática correta aplicada ao montante devedor.
+- Pedido `APROVADO` para pagamentos à vista (sem análise de crédito necessária).
 
 ---
 
-### CT06 - Submissão de Checkout - Validação de Campos Obrigatórios e Formatação
+### CT06 - Checkout e Análise de Crédito - Financiamento com Score Alto (Aprovado)
 
 #### Objetivo
-Validar que os inputs do formulário de checkout respeitam as validações (máscaras, tamanho mínimo, formato de email) estabelecidas no schema Zod.
+Validar a regra de aprovação automática de crédito quando o score do CPF for maior que 700 no financiamento.
 
 #### Pré-Condições
-- Usuário na tela de Checkout.
+- Estar no Checkout com um carro base (R$ 40.000,00).
+- Utilizar um CPF de teste que retorne `Score > 700` na API de análise.
 
 #### Passos
 
 | Id | Ação | Resultado Esperado |
 |----|------|--------------------|
-| 1 | Deixar "Nome" e "Sobrenome" em branco ou com 1 letra e tentar enviar. | Exibe erro: "Nome deve ter pelo menos 2 caracteres" / "Sobrenome deve ter pelo menos 2 caracteres". |
-| 2 | Preencher um email sem "@" (formato inválido) e tentar enviar. | Exibe erro: "Email inválido". |
-| 3 | Preencher CPF e Telefone de forma incompleta e enviar. | Exibe erros de "CPF inválido" e "Telefone inválido". |
-| 4 | Não selecionar nenhuma loja no Dropdown e enviar. | Exibe erro: "Selecione uma loja". |
+| 1  | Preencher formulário válido usando um CPF com score alto | Sem erros de preenchimento. |
+| 2  | Selecionar "Financiamento" e preencher "Valor da Entrada" como `0` | Parcela (12x) reflete o cálculo com 2% a.m: `(40000 / 12) * 1.02`. |
+| 3  | Aceitar os termos e clicar em "Confirmar Pedido" | Sistema envia CPF para análise de crédito e processa a requisição. |
+| 4  | Observar a navegação pós-submissão | O sistema direciona à página de sucesso exibindo "Pedido Aprovado!". |
 
 #### Resultados Esperados
-- O pedido não prossegue até que todos os campos estejam de acordo com as regras de tipagem e formato.
+- O pedido é registrado no sistema com o status `APROVADO` de forma automática, validando o Score Alto.
 
 #### Critérios de Aceitação
-- Bloqueio de envio em falha de esquema Zod.
-- Uso de máscara no Telefone e CPF.
+- Se o campo modalidade de pagamento for Financiamento e o Score retornado for > 700, o status é Aprovado.
 
 ---
 
-### CT07 - Submissão de Checkout - Aceite dos Termos de Uso
+### CT07 - Checkout e Análise de Crédito - Financiamento com Score Médio (Em análise)
 
 #### Objetivo
-Garantir que a checkbox de "Termos de Uso e Privacidade" funcione como bloqueador da compra.
+Validar a regra do score de crédito moderado, que destina o pedido para verificação manual.
 
 #### Pré-Condições
-- Formulário do cliente perfeitamente preenchido.
-- Selecionado um método de pagamento.
+- Estar no checkout com um veículo e entrada configuradas.
+- Utilizar um CPF de teste que retorne um Score entre `501 e 700` na API.
 
 #### Passos
 
 | Id | Ação | Resultado Esperado |
 |----|------|--------------------|
-| 1 | Deixar a checkbox dos Termos de Uso desmarcada. | A caixa não está assinalada. |
-| 2 | Clicar em "Confirmar Pedido". | Exibe erro de validação: "Aceite os termos". |
-| 3 | Marcar a checkbox e clicar novamente. | O fluxo de pedido é iniciado. |
+| 1  | Preencher dados válidos com CPF de score entre 501 e 700 | Campos válidos. |
+| 2  | Selecionar "Financiamento", entrada `0`, aceitar termos e confirmar | Sistema processa a requisição de crédito. |
+| 3  | Observar a confirmação de criação do pedido | A rota redireciona, mas o aviso visual deve demonstrar que o pedido foi criado com status "EM ANÁLISE" (ícone de relógio na consulta do pedido ou texto correspondente). |
 
 #### Resultados Esperados
-- Aceite explícito é obrigatório.
+- O pedido é registrado no sistema com o status `EM_ANALISE`.
 
 #### Critérios de Aceitação
-- Erro visual exigindo aceite do usuário antes da criação na base de dados.
+- Pedidos com Score de 501 a 700 recebem status `EM_ANALISE`.
 
 ---
 
-### CT08 - Análise de Crédito: Score > 700 (Aprovado)
+### CT08 - Checkout e Análise de Crédito - Financiamento com Score Baixo (Reprovado)
 
 #### Objetivo
-Validar a aprovação automática via integração de API para clientes com alto Score.
+Validar a regra de reprovação de crédito quando o Score for menor ou igual a 500 no financiamento.
 
 #### Pré-Condições
-- Checkout preenchido e "Financiamento" escolhido.
-- Entrada menor que 50% do total.
-- CPF consultado retorna Score = 750.
+- Estar no checkout com veículo configurado e sem entrada (ou entrada menor que 50%).
+- Utilizar um CPF de teste que retorne `Score <= 500`.
 
 #### Passos
 
 | Id | Ação | Resultado Esperado |
 |----|------|--------------------|
-| 1 | Clicar em "Confirmar Pedido". | O sistema aciona a função Supabase `credit-analysis`. |
-| 2 | Aguardar o redirecionamento. | Tela de Confirmação é exibida com o Pedido processado. |
-| 3 | Verificar o Status do Pedido na tela. | Status do Pedido exibe "APROVADO". |
+| 1  | Preencher dados com formulário válido, inserindo um CPF com score baixo | Os campos ficam válidos. |
+| 2  | Na aba Financiamento, informar entrada inferior a 50% do total | Formulário preenchido e parcelas calculadas da diferença. |
+| 3  | Aceitar termos e clicar em "Confirmar Pedido" | Sistema processa e avalia o crédito pela API. |
+| 4  | Observar a página resultante (`/success`) | O redirecionamento ocorre, mas a página exibe "Crédito Reprovado" ou falha visual (ícone de X) com a mensagem apropriada. |
 
 #### Resultados Esperados
-- Pedido salvo e aprovado devido ao alto score.
+- O pedido de financiamento com score baixo é salvo como `REPROVADO` e o usuário não prossegue no fluxo feliz.
 
 #### Critérios de Aceitação
-- Regra `Score > 700 -> APROVADO` aplicada.
+- Score <= 500 e entrada < 50% resultam na reprovação absoluta do pedido.
 
 ---
 
-### CT09 - Análise de Crédito: Score 501 a 700 (Em Análise)
+### CT09 - Checkout e Exceção de Crédito - Financiamento com Entrada >= 50% e Score Baixo (Aprovado)
 
 #### Objetivo
-Validar que clientes com Score intermediário tenham seus pedidos postos em fila de análise.
+Validar a regra de exceção na aprovação de crédito, garantindo que qualquer Score seja ignorado e o status seja `APROVADO` quando a entrada atinge 50% do total.
 
 #### Pré-Condições
-- Checkout preenchido.
-- Financiamento com Entrada < 50%.
-- API retorna Score = 600.
+- Veículo base R$ 40.000,00 no Checkout.
+- Utilizar um CPF de teste que retorne `Score <= 500` (que deveria reprovar normalmente).
 
 #### Passos
 
 | Id | Ação | Resultado Esperado |
 |----|------|--------------------|
-| 1 | Submeter o pedido. | Requisição feita à API de crédito. |
-| 2 | Verificar a tela de Confirmação. | A tela é carregada com a mensagem de que o pedido foi criado, mas com Status "EM_ANALISE". |
+| 1  | Preencher campos obrigatórios e usar CPF de Score Baixo | Tudo preenchido corretamente. |
+| 2  | Escolher "Financiamento" e definir "Valor da Entrada" igual a `20000` (50% do total) ou `25000` | Resumo atualiza e a parcela exibe o valor diluído: `((Total - Entrada) / 12) * 1.02`. |
+| 3  | Aceitar termos e clicar em "Confirmar Pedido" | Sistema efetua solicitação em background. |
+| 4  | Verificar rota de confirmação | Navegação finalizada com a mensagem de "Pedido Aprovado!", comprovando que a exceção da entrada sobrepôs a reprovação do score baixo. |
 
 #### Resultados Esperados
-- Pedido salvo aguardando intervenção manual.
+- A regra de entrada prevalece e o pedido entra direto com o status `APROVADO`.
 
 #### Critérios de Aceitação
-- Regra `Score >= 501 && Score <= 700 -> EM_ANALISE` aplicada.
+- Quando `(Entrada / Valor Total) >= 0.5`, o resultado é invariavelmente Aprovado independentemente da pontuação < 700.
 
 ---
 
-### CT10 - Análise de Crédito: Score <= 500 (Reprovado)
+### CT10 - Consulta de Pedidos - Consultar um Pedido Existente com Sucesso
 
 #### Objetivo
-Validar que scores baixos forçam a reprovação do pedido no checkout de financiamentos.
+Garantir que um usuário comum pode revisar o status de sua compra digitando um número de pedido válido.
 
 #### Pré-Condições
-- Checkout preenchido.
-- Financiamento com Entrada < 50%.
-- API retorna Score = 400.
+- O cliente deve ter em mãos um número de pedido válido criado anteriormente (ex: `VLO-ABCD10`).
+- Acessar a página de Consultar Pedido (`/lookup`).
 
 #### Passos
 
 | Id | Ação | Resultado Esperado |
 |----|------|--------------------|
-| 1 | Submeter o pedido. | Requisição feita à API de crédito. |
-| 2 | Verificar a tela de Confirmação. | A tela informa que a operação foi concluída e exibe Status do Pedido como "REPROVADO". |
+| 1  | Digitar o número do pedido válido no campo "Número do Pedido" | O campo aceita e permite prosseguir. |
+| 2  | Clicar no botão "Buscar Pedido" | O sistema deve entrar em estado de `loading` por uns instantes. |
+| 3  | Aguardar a apresentação dos dados | O componente exibe um card com: Status atual (Aprovado/Em Analise/Reprovado), Informações do Carro (Core, Opcionais), Dados do Cliente e Valores Financeiros. |
 
 #### Resultados Esperados
-- Fluxo de recusa automático funciona corretamente.
+- A exibição do pedido consultado confere perfeitamente com os dados do pedido recém efetuado no banco.
 
 #### Critérios de Aceitação
-- Regra `Score <= 500 -> REPROVADO` aplicada.
+- Somente com um `order_number` real o sistema retorna os dados do pedido com segurança.
 
 ---
 
-### CT11 - Análise de Crédito: Exceção Entrada >= 50%
+### CT11 - Consulta de Pedidos - Número de Pedido Não Encontrado (Inválido)
 
 #### Objetivo
-Testar a exceção à regra: entradas altas compensam scores reprováveis, aprovando automaticamente.
+Validar que ordens não cadastradas ou strings aleatórias não vazam dados nem travam a consulta, demonstrando erro de não existência.
 
 #### Pré-Condições
-- Veículo = R$ 40.000.
-- Financiamento selecionado.
-- API retorna Score = 350.
+- Acessar a página de Consultar Pedido (`/lookup`).
 
 #### Passos
 
 | Id | Ação | Resultado Esperado |
 |----|------|--------------------|
-| 1 | No campo "Valor da Entrada", digitar R$ 20.000 (exatamente 50%). | O cálculo de parcelamento é atualizado. |
-| 2 | Submeter o pedido. | O sistema envia as requisições para criar a ordem. |
-| 3 | Verificar o resultado final. | A tela de sucesso confirma o pedido com Status "APROVADO", ignorando a faixa do Score baixo. |
+| 1  | Inserir um número de pedido que não existe ou formato incorreto (ex: `VLO-INEXISTENTE`) | Form preenchido com ordem fake. |
+| 2  | Clicar em "Buscar Pedido" | O sistema busca na API e não encontra correspondente. |
+| 3  | Observar o feedback na interface | O sistema mostra de forma visível a mensagem "Pedido não encontrado" e o ícone de X num painel vermelho. Dados em branco continuam ocultos. |
+| 4  | Clicar em buscar com o campo de pedido vazio | O botão deve permanecer desabilitado antes de fornecer algum caractere. |
 
 #### Resultados Esperados
-- A regra de exceção aprova sem considerar as faixas de score convencionais.
+- Segurança e estabilidade de tela diante de consultas inválidas. Nenhuma exception exposta.
 
 #### Critérios de Aceitação
-- Regra `(entryValue / totalPrice) >= 0.5 && score < 700 -> APROVADO` observada no código é aplicada com sucesso.
-
----
-
-### CT12 - Confirmação do Pedido e Geração do Order Number
-
-#### Objetivo
-Validar a finalização da compra gerando um Identificador de Consulta.
-
-#### Pré-Condições
-- Pedido submetido com sucesso.
-
-#### Passos
-
-| Id | Ação | Resultado Esperado |
-|----|------|--------------------|
-| 1 | Acessar a tela de Sucesso. | O resumo de dados pessoais e valores é exibido. |
-| 2 | Observar o código principal (ex: ID no formato UUID). | O código único do pedido está claro na interface do usuário. |
-
-#### Resultados Esperados
-- O pedido exibe o código para permitir rastreio/consulta futura.
-
-#### Critérios de Aceitação
-- Exibição visível e fidedigna ao banco de dados do ID.
-
----
-
-### CT13 - Consulta de Pedidos com Número Válido
-
-#### Objetivo
-Garantir o funcionamento da ferramenta de Busca (`/lookup`).
-
-#### Pré-Condições
-- O número de um pedido real é conhecido.
-
-#### Passos
-
-| Id | Ação | Resultado Esperado |
-|----|------|--------------------|
-| 1 | Navegar até a tela de Consulta de Pedidos. | O formulário de busca aparece. |
-| 2 | Inserir o número válido e clicar em "Buscar Pedido". | Card de informações é renderizado via API. |
-| 3 | Analisar o resultado. | O card exibe os opcionais, total, pagamento e Status do pedido atualizados. |
-
-#### Resultados Esperados
-- Consulta traz os detalhes exatos e seguros do pedido.
-
-#### Critérios de Aceitação
-- Todos os campos principais mapeiam adequadamente o estado do banco.
-
----
-
-### CT14 - Consulta de Pedidos com Número Inexistente/Inválido
-
-#### Objetivo
-Validar o tratamento de falhas ao buscar um pedido falso.
-
-#### Pré-Condições
-- Usuário na página de Consulta de Pedidos.
-
-#### Passos
-
-| Id | Ação | Resultado Esperado |
-|----|------|--------------------|
-| 1 | Digitar "PEDIDO-FALSO" no input. | Campo aceita a string. |
-| 2 | Clicar em "Buscar Pedido". | Carregamento é feito, e resulta na mensagem "Pedido não encontrado". |
-
-#### Resultados Esperados
-- Feedback visual é exibido para o usuário de maneira limpa.
-
-#### Critérios de Aceitação
-- Exibição de card de aviso com ícone e texto instrutivo.
+- Se `orderId` não retorna dados exatos pela API, o feedback de falha "Pedido não encontrado" é retornado de forma amigável ao cliente.

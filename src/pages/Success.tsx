@@ -121,7 +121,7 @@ const Success = () => {
           <div>
             <p className="text-muted-foreground">Cliente</p>
             <p className="font-medium">
-              {order.customer.name} {order.customer.surname}
+              {order.customer.name} {order.customer.lastname}
             </p>
           </div>
           <div>

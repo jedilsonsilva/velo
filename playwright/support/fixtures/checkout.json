@@ -1,0 +1,11 @@
+{
+  "validCustomer": {
+    "name": "Joao",
+    "lastname": "Silva",
+    "email": "joao@teste.com",
+    "phone": "(11) 99999-9999",
+    "document": "529.982.247-25",
+    "store": "Velô Paulista - Av. Paulista, 1000"
+  },
+  "invalidEmail": "cliente@.com"
+}

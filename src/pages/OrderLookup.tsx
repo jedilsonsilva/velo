@@ -200,7 +200,7 @@ const OrderLookup = () => {
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
                     <p className="text-muted-foreground">Nome</p>
-                    <p className="font-medium">{searchedOrder.customer.name} {searchedOrder.customer.surname}</p>
+                    <p className="font-medium">{searchedOrder.customer.name} {searchedOrder.customer.lastname}</p>
                   </div>
                   <div>
                     <p className="text-muted-foreground">Email</p>

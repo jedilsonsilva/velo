@@ -20,10 +20,10 @@ export interface Order {
   totalPrice: number;
   customer: {
     name: string;
-    surname: string;
+    lastname: string;
     email: string;
     phone: string;
-    cpf: string;
+    document: string;
     store: string;
   };
   paymentMethod: 'avista' | 'financiamento';

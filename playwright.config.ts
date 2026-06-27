@@ -1,12 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
+import dotenv from 'dotenv';
+import path from 'path';
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config({ path: path.resolve(import.meta.dirname, '.env') });
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -23,6 +19,9 @@ export default defineConfig({
 
 
   testDir: './playwright/e2e',
+  // Caminho curto evita hang ao salvar trace no Windows (paths longos em test-results)
+  outputDir: 'C:/temp/pw-test-results',
+  globalTeardown: './playwright/support/database/globalTeardown.ts',
   /* Run tests in files in parallel */
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
@@ -39,7 +38,7 @@ export default defineConfig({
     baseURL: 'http://localhost:5173',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on',
+    trace: 'retain-on-failure',
 
     // Tempo máximo para ações interativas como click(), fill()
     // Quando o valor é 0, herda o limite do timeout geral do teste
@@ -93,9 +92,10 @@ export default defineConfig({
   ],
 
   /* Run your local dev server before starting the tests */
-  // webServer: {
-  //   command: 'npm run start',
-  //   url: 'http://localhost:3000',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  webServer: {
+    command: 'yarn dev',
+    url: 'http://localhost:5173',
+    reuseExistingServer: !process.env.CI,
+    timeout: 120_000,
+  },
 });

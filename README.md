@@ -57,6 +57,11 @@ Crie o arquivo `.env` na raiz do projeto:
 VITE_SUPABASE_PROJECT_ID="seu_project_id"
 VITE_SUPABASE_PUBLISHABLE_KEY="sua_chave_anon_publica"
 VITE_SUPABASE_URL="https://seu_project_id.supabase.co"
+
+# Testes E2E com seed direto no Postgres (mesmo project ref acima)
+# Supabase → Connect → Session pooler (IPv4; recomendado no Windows)
+# Formato: postgresql://postgres.[project-ref]:SUA_SENHA@aws-0-[region].pooler.supabase.com:5432/postgres
+DATABASE_URL=postgresql://postgres.seu_project_id:SUA_SENHA@aws-0-us-west-2.pooler.supabase.com:5432/postgres
 ```
 
 > Encontre essas informações em: **Project Settings → API**
