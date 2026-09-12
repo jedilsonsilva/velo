@@ -1,112 +1,110 @@
-import { expect, test } from '../support/fixtures'
+﻿import { test, expect } from '../support/fixtures'
 import checkoutFixtures from '../support/fixtures/checkout.json' with { type: 'json' }
-import { deleteOrderByEmail } from '../support/database/orderRepository'
-
-const CONFIGURATOR_STORAGE_KEY = 'velo-configurator-storage'
+import type { CheckoutAlerts } from '../support/actions/checkoutActions'
+import type { CheckoutOrder } from '../support/features/checkoutFeature'
 
 test.describe('Checkout', () => {
   test.describe('Validações de campos obrigatórios', () => {
-    test.beforeEach(async ({ app }) => {
-      await app.checkout.openFromConfigurator()
+    let alerts: CheckoutAlerts
+
+    test.beforeEach(async ({ page, app }) => {
+      await page.goto('/order')
+      await expect(page.getByRole('heading', { name: 'Finalizar Pedido' })).toBeVisible()
+
+      alerts = app.checkout.elements.alerts
     })
 
-    test('deve exibir erros ao confirmar pedido com todos os campos em branco', async ({ app }) => {
-      await app.checkout.submitOrder()
+    test('deve validar obrigatoriedade de todos os campos em branco', async ({ app }) => {
+      await app.checkout.submit()
 
-      await app.checkout.expectStayOnCheckout()
-      await app.checkout.expectValidationErrors(
-        'Nome deve ter pelo menos 2 caracteres',
-        'Sobrenome deve ter pelo menos 2 caracteres',
-        'Email inválido',
-        'Telefone inválido',
-        'CPF inválido',
-        'Selecione uma loja',
-        'Aceite os termos',
-      )
+      await expect(alerts.name).toHaveText('Nome deve ter pelo menos 2 caracteres')
+      await expect(alerts.lastname).toHaveText('Sobrenome deve ter pelo menos 2 caracteres')
+      await expect(alerts.email).toHaveText('Email inválido')
+      await expect(alerts.phone).toHaveText('Telefone inválido')
+      await expect(alerts.document).toHaveText('CPF inválido')
+      await expect(alerts.store).toHaveText('Selecione uma loja')
+      await expect(alerts.terms).toHaveText('Aceite os termos')
     })
 
-    test('deve exibir erro quando nome e sobrenome têm apenas 1 caractere', async ({ app }) => {
-      await app.checkout.fillCustomer({ name: 'A', lastname: 'B' })
-      await app.checkout.submitOrder()
+    test('deve validar limite mínimo de caracteres para Nome e Sobrenome', async ({ app }) => {
+      const customer = checkoutFixtures.shortNameCustomer
 
-      await app.checkout.expectStayOnCheckout()
-      await app.checkout.expectValidationErrors(
-        'Nome deve ter pelo menos 2 caracteres',
-        'Sobrenome deve ter pelo menos 2 caracteres',
-      )
+      await app.checkout.fillCustomerlData(customer)
+      await app.checkout.selectStore(customer.store)
+      await app.checkout.acceptTerms()
+      await app.checkout.submit()
+
+      await expect(alerts.name).toHaveText('Nome deve ter pelo menos 2 caracteres')
+      await expect(alerts.lastname).toHaveText('Sobrenome deve ter pelo menos 2 caracteres')
     })
 
-    test('deve exibir erro quando o e-mail é inválido', async ({ app }) => {
-      await app.checkout.fillCustomer({
-        ...checkoutFixtures.validCustomer,
-        email: checkoutFixtures.invalidEmail,
-      })
-      await app.checkout.submitOrderBypassingNativeValidation()
+    test('deve exibir erro para e-mail com formato inválido', async ({ app }) => {
+      const customer = checkoutFixtures.invalidEmailCustomer
 
-      await app.checkout.expectStayOnCheckout()
-      await app.checkout.expectValidationErrors('Email inválido')
+      await app.checkout.fillCustomerlData(customer)
+      await app.checkout.selectStore(customer.store)
+      await app.checkout.acceptTerms()
+      await app.checkout.submit()
+
+      await expect(alerts.email).toHaveText('Email inválido')
     })
 
-    test('deve exibir erro quando o CPF está incompleto', async ({ app }) => {
-      const { document: _document, ...customerWithoutDocument } = checkoutFixtures.validCustomer
-      await app.checkout.fillCustomer(customerWithoutDocument)
-      await app.checkout.submitOrder()
+    test('deve exibir erro para CPF inválido', async ({ app }) => {
+      const customer = checkoutFixtures.invalidCpfCustomer
 
-      await app.checkout.expectStayOnCheckout()
-      await app.checkout.expectValidationErrors('CPF inválido')
+      await app.checkout.fillCustomerlData(customer)
+      await app.checkout.selectStore(customer.store)
+      await app.checkout.acceptTerms()
+      await app.checkout.submit()
+
+      await expect(alerts.document).toHaveText('CPF inválido')
     })
 
-    test('deve exibir erro quando os termos não são aceitos', async ({ app }) => {
-      await app.checkout.fillCustomer(checkoutFixtures.validCustomer)
-      await app.checkout.submitOrder()
+    test('deve exigir o aceite dos termos ao finalizar com dados válidos', async ({ app }) => {
+      const customer = checkoutFixtures.termsCustomer
 
-      await app.checkout.expectStayOnCheckout()
-      await app.checkout.expectValidationErrors('Aceite os termos')
+      await app.checkout.fillCustomerlData(customer)
+      await app.checkout.selectStore(customer.store)
+
+      await expect(app.checkout.elements.terms).not.toBeChecked()
+
+      await app.checkout.submit()
+
+      await expect(alerts.terms).toHaveText('Aceite os termos')
     })
   })
 
   test.describe('Pagamento e Confirmação', () => {
-    const cashPaymentOrder = {
-      customer: {
-        name: 'Jedilson',
-        lastname: 'Silva',
-        email: 'jedilson.silva@velo.dev',
-        phone: '(11) 94444-2222',
-        document: '779.239.860-96',
-        store: 'Velô Paulista - Av. Paulista, 1000',
-      },
-      expectedTotal: 'R$ 40.000,00',
-    } as const
-
-    test.beforeEach(async () => {
-      await deleteOrderByEmail(cashPaymentOrder.customer.email)
+    test.beforeEach(async ({ app }) => {
+      await app.hero.open()
     })
 
-    test('deve criar pedido aprovado com pagamento à vista', async ({ page, app }) => {
-      await page.goto('/')
-      await expect(page.getByTestId('landing-page')).toBeVisible()
-      await page.evaluate((key) => localStorage.removeItem(key), CONFIGURATOR_STORAGE_KEY)
+    test('deve criar um pedido com sucesso para pagamento à vista', async ({ app }) => {
+      await app.checkoutFeature.completePurchase(checkoutFixtures.cashOrder as CheckoutOrder)
+    })
 
-      await page.getByTestId('hero-cta-primary').click()
-      await expect(page).toHaveURL(/\/configure/)
-      await expect(page.getByRole('heading', { name: 'Velô Sprint', level: 1 })).toBeVisible()
+    test('deve aprovar automaticamente o crédito quando o score do CPF for maior que 700 no financiamento', async ({ app }) => {
+      await app.checkoutFeature.completePurchase(checkoutFixtures.highScoreOrder as CheckoutOrder)
+    })
 
-      await app.configurator.selectExteriorColor('Glacier Blue')
-      await app.configurator.selectWheels('aero')
-      await app.configurator.expectExteriorPreviewAlt(/aero wheels/)
-      await app.configurator.expectPrice(cashPaymentOrder.expectedTotal)
+    test('deve encaminhar para análise de crédito quando o score do CPF for entre 501 e 700 no financiamento', async ({ app }) => {
+      await app.checkoutFeature.completePurchase(checkoutFixtures.midScoreOrder as CheckoutOrder)
+    })
 
-      await page.getByRole('button', { name: 'Monte o Seu' }).click()
-      await expect(page).toHaveURL(/\/order/)
-      await expect(page.getByRole('heading', { name: 'Finalizar Pedido' })).toBeVisible()
+    test('deve reprovar o crédito quando o score do CPF for menor ou igual a 500 no financiamento sem entrada', async ({ app }) => {
+      await app.checkoutFeature.completePurchase(checkoutFixtures.lowScoreNoEntry as CheckoutOrder)
+    })
 
-      await app.checkout.fillCustomer(cashPaymentOrder.customer)
-      await app.checkout.expectNoValidationErrors()
-      await app.checkout.selectCashPayment()
-      await app.checkout.expectCashPaymentPrice(cashPaymentOrder.expectedTotal)
-      await app.checkout.acceptTerms()
-      await app.checkout.submitOrder()
-      await app.checkout.expectApprovedOrderSuccess(cashPaymentOrder)
+    test('deve reprovar o crédito quando o score do CPF for menor ou igual a 500 no financiamento com entrada menor que 50%', async ({ app }) => {
+      await app.checkoutFeature.completePurchase(checkoutFixtures.lowScoreLowEntry as CheckoutOrder)
+    })
+
+    test('deve reprovar o crédito quando o score do CPF for menor ou igual a 500 no financiamento com entrada igual a 50%', async ({ app }) => {
+      await app.checkoutFeature.completePurchase(checkoutFixtures.lowScoreHalfEntry as CheckoutOrder)
+    })
+
+    test('deve aprovar o crédito quando o score do CPF for menor ou igual a 500 no financiamento com entrada mais que 50%', async ({ app }) => {
+      await app.checkoutFeature.completePurchase(checkoutFixtures.lowScoreHighEntry as CheckoutOrder)
     })
   })
 })

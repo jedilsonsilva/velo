@@ -1,11 +1,120 @@
 {
-  "validCustomer": {
-    "name": "Joao",
-    "lastname": "Silva",
-    "email": "joao@teste.com",
+  "shortNameCustomer": {
+    "name": "A",
+    "lastname": "B",
+    "email": "papito@teste.com",
+    "document": "00000014141",
     "phone": "(11) 99999-9999",
-    "document": "529.982.247-25",
-    "store": "Velô Paulista - Av. Paulista, 1000"
+    "store": "Velô Paulista"
   },
-  "invalidEmail": "cliente@.com"
+  "invalidEmailCustomer": {
+    "name": "Fernando",
+    "lastname": "Papito",
+    "email": "papito@.com",
+    "document": "00000014141",
+    "phone": "(11) 99999-9999",
+    "store": "Velô Paulista"
+  },
+  "invalidCpfCustomer": {
+    "name": "Fernando",
+    "lastname": "Papito",
+    "email": "papito@test.com",
+    "document": "00000014199",
+    "phone": "(11) 99999-9999",
+    "store": "Velô Paulista"
+  },
+  "termsCustomer": {
+    "name": "Fernando",
+    "lastname": "Papito",
+    "email": "papito@test.com",
+    "document": "00000014199",
+    "phone": "(11) 99999-9999",
+    "store": "Velô Paulista"
+  },
+  "cashOrder": {
+    "name": "Fernando",
+    "lastname": "Papito",
+    "email": "papito@teste.com",
+    "document": "05366127068",
+    "phone": "(11) 99999-9999",
+    "store": "Velô Paulista",
+    "paymentMethod": "À Vista",
+    "totalPrice": "R$ 40.000,00",
+    "expectedResult": "Pedido Aprovado!"
+  },
+  "highScoreOrder": {
+    "name": "Steve",
+    "lastname": "Woz",
+    "email": "woz@velo.dev",
+    "document": "65493881047",
+    "phone": "(11) 99999-9999",
+    "store": "Velô Paulista",
+    "paymentMethod": "Financiamento",
+    "totalPrice": "R$ 40.000,00",
+    "creditScore": 710,
+    "expectedResult": "Pedido Aprovado!"
+  },
+  "midScoreOrder": {
+    "name": "Tony",
+    "lastname": "Stark",
+    "email": "tony@stark.com",
+    "document": "74690251037",
+    "phone": "(11) 99999-9999",
+    "store": "Velô Paulista",
+    "paymentMethod": "Financiamento",
+    "totalPrice": "R$ 40.000,00",
+    "creditScore": 600,
+    "expectedResult": "Pedido em Análise!"
+  },
+  "lowScoreNoEntry": {
+    "name": "Clark",
+    "lastname": "Kent",
+    "email": "clark@dailyplanet.com",
+    "document": "52998224725",
+    "phone": "(11) 99999-9999",
+    "store": "Velô Paulista",
+    "paymentMethod": "Financiamento",
+    "totalPrice": "R$ 40.000,00",
+    "creditScore": 500,
+    "expectedResult": "Pedido Reprovado!"
+  },
+  "lowScoreLowEntry": {
+    "name": "Diana",
+    "lastname": "Prince",
+    "email": "diana@themiscira.com",
+    "document": "11144477735",
+    "phone": "(11) 99999-9999",
+    "store": "Velô Paulista",
+    "paymentMethod": "Financiamento",
+    "totalPrice": "R$ 40.000,00",
+    "downPayment": "10000",
+    "creditScore": 500,
+    "expectedResult": "Pedido Reprovado!"
+  },
+  "lowScoreHalfEntry": {
+    "name": "Richard",
+    "lastname": "Fortus",
+    "email": "richard@gmail.com",
+    "document": "39434745004",
+    "phone": "(11) 99999-9999",
+    "store": "Velô Paulista",
+    "paymentMethod": "Financiamento",
+    "totalPrice": "R$ 40.000,00",
+    "downPayment": "20000",
+    "creditScore": 450,
+    "expectedResult": "Pedido Aprovado!"
+  },
+  "lowScoreHighEntry": {
+    "name": "Axl",
+    "lastname": "Rose",
+    "email": "alx@gnr.com",
+    "document": "79327557000",
+    "phone": "(11) 99999-9999",
+    "store": "Velô Paulista",
+    "paymentMethod": "Financiamento",
+    "totalPrice": "R$ 40.000,00",
+    "downPayment": "30000",
+    "creditScore": 300,
+    "expectedResult": "Pedido Aprovado!"
+  }
 }

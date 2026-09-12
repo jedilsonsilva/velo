@@ -49,5 +49,11 @@ export function createConfiguratorActions(page: Page) {
       await expect(totalPrice).toHaveText(price)
       await expect(totalPrice).toBeVisible()
     },
+
+    async finishConfigurator() {
+      await page.getByRole('button', { name: 'Monte o Seu' }).click()
+      await expect(page).toHaveURL(/\/order/)
+      await expect(page.getByRole('heading', { name: 'Finalizar Pedido' })).toBeVisible()
+    },
   }
 }

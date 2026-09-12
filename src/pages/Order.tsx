@@ -58,12 +58,32 @@ const stores = [
   'Velô Ibirapuera - Av. Ibirapuera, 3000',
 ];
 
+function isValidCPF(cpf: string): boolean {
+  const digits = cpf.replace(/\D/g, '');
+  if (digits.length !== 11 || /^(\d)\1+$/.test(digits)) return false;
+
+  let sum = 0;
+  for (let i = 0; i < 9; i++) sum += Number(digits[i]) * (10 - i);
+  let checkDigit = (sum * 10) % 11;
+  if (checkDigit === 10) checkDigit = 0;
+  if (checkDigit !== Number(digits[9])) return false;
+
+  sum = 0;
+  for (let i = 0; i < 10; i++) sum += Number(digits[i]) * (11 - i);
+  checkDigit = (sum * 10) % 11;
+  if (checkDigit === 10) checkDigit = 0;
+  return checkDigit === Number(digits[10]);
+}
+
 const orderSchema = z.object({
   name: z.string().min(2, 'Nome deve ter pelo menos 2 caracteres'),
   lastname: z.string().min(2, 'Sobrenome deve ter pelo menos 2 caracteres'),
   email: z.string().email('Email inválido'),
   phone: z.string().min(14, 'Telefone inválido'),
-  document: z.string().min(14, 'CPF inválido'),
+  document: z
+    .string()
+    .min(14, 'CPF inválido')
+    .refine((value) => isValidCPF(value), 'CPF inválido'),
   store: z.string().min(1, 'Selecione uma loja'),
   terms: z.boolean().refine((val) => val === true, 'Aceite os termos'),
 });
