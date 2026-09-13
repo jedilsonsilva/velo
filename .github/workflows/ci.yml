@@ -71,7 +71,7 @@ jobs:
       
       # 5. Obter configurações do Vercel
       - name: Pull Vercel config
-        run: yarn vercel pull --yes --environment=preview --token $VERCEL_TOKEN --scope=$VERCEL_SCOPE
+        run: yarn vercel pull --yes --environment=preview --token=$VERCEL_TOKEN --scope=$VERCEL_SCOPE
 
       # 6. Build para o vercel
       - name: Build Vercel
@@ -79,4 +79,4 @@ jobs:
 
       # 7. Deploy Preview no Vercel1
       - name: Deploy Preview
-        run: yarn vercel deploy --prebuilt --target=preview --token $VERCEL_TOKEN --scope=$VERCEL_SCOPE
+        run: yarn vercel deploy --prebuilt --target=preview --token=$VERCEL_TOKEN --scope=$VERCEL_SCOPE
