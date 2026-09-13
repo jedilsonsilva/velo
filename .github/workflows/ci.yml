@@ -77,6 +77,6 @@ jobs:
       - name: Build Vercel
         run: yarn vercel build --$VERCEL_TOKEN
 
-      # 7. Deploy Preview no Vercel
+      # 7. Deploy Preview no Vercel1
       - name: Deploy Preview
         run: yarn vercel deploy --prebuilt --target=preview --token $VERCEL_TOKEN --scope=$VERCEL_SCOPE
