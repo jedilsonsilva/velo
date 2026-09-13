@@ -94,7 +94,7 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: 'yarn dev',
-    url: 'http://localhost:5173',
+    url: 'https://velo-jedi.vercel.app',
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },
