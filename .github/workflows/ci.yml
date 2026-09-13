@@ -13,7 +13,7 @@ env:
   VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
   VERCEl_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-  VERCEL_SCOPE: automacao-velo
+  VERCEL_SCOPE: ${{ secrets.VERCEL_SCOPE }}
 
 jobs:
   unit-tests:
