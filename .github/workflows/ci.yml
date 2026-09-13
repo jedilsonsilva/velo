@@ -34,7 +34,7 @@ jobs:
 
       # Instala dependências de forma reproduzível via yarn.lock
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
 
       # Executa a suíte de testes unitários (Vitest)
       - name: Run unit tests
