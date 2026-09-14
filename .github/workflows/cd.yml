@@ -1,7 +1,7 @@
 # Continuous Integration — executa testes unitários (Vitest) em push na main.
 # Estrutura pronta para expansão futura (novos jobs: lint, e2e, etc.).
 
-name: Continuous Integration
+name: Continuous Deployment
 
 on:
   push:
@@ -128,3 +128,16 @@ jobs:
         with:
           name: playwright-report
           path: playwright-report
+
+promote:
+  name: Promote to Production
+  needs: [e2e-tests]
+  runs-on: ubuntu-latest
+
+  steps:
+    - name: Vercel promote
+      run: | 
+        yarn vercel promote ${{ needs.build-and-deploy.outputs.deployment-url }} \
+        --token=$VERCEL_TOKEN \
+        --scope=$VERCEL_SCOPE \
+        --yes
