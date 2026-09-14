@@ -44,7 +44,7 @@ jobs:
       - name: Run unit tests
         run: yarn test
   
-  build-and-delploy:
+  build-and-deploy:
     name: Build & Deploy Vercel Preview
     needs: [unit-tests]
     runs-on: ubuntu-latest
