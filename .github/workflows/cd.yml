@@ -1,5 +1,5 @@
-# Continuous Integration — executa testes unitários (Vitest) em push na main.
-# Estrutura pronta para expansão futura (novos jobs: lint, e2e, etc.).
+# Continuous Deployment — unit tests → preview (Supabase preview) → E2E → produção (rebuild com VITE_* de Production).
+# Tarefa 4: não promovemos o artefato de preview. VITE_* são embutidas no build; produção exige novo build com env Production.
 
 name: Continuous Deployment
 
@@ -44,7 +44,7 @@ jobs:
       # 5. Executa a suíte de testes unitários (Vitest)
       - name: Run unit tests
         run: yarn test
-  
+
   build-and-deploy:
     name: Build & Deploy Vercel Preview
     needs: [unit-tests]
@@ -71,18 +71,18 @@ jobs:
       # 4. Instala as dependências do projeto
       - name: Install dependencies
         run: yarn install
-      
-      # 5. Obter configurações do Vercel
+
+      # 5. Baixa env vars do ambiente Preview (VITE_SUPABASE_* → Supabase preview)
       - name: Pull Vercel config
         run: yarn vercel pull --yes --environment=preview --token=$VERCEL_TOKEN --scope=$VERCEL_SCOPE
 
-      # 6. Build para o vercel
+      # 6. Build embutindo as VITE_* de Preview no bundle
       - name: Build Vercel
         run: yarn vercel build --token=$VERCEL_TOKEN
 
-      # 7. Deploy Preview no Vercel1
+      # 7. Deploy do artefato de Preview
       - name: Deploy Preview
-        id: deploy 
+        id: deploy
         run: |
           URL=$(yarn --silent vercel deploy --prebuilt --target=preview --token=$VERCEL_TOKEN --scope=$VERCEL_SCOPE)
           echo "deployment-url=${URL}" >> "$GITHUB_OUTPUT"
@@ -113,14 +113,15 @@ jobs:
         run: yarn install
 
       # 5. Instalação do Chromium
-      - name: Install Playwright Browser 
+      - name: Install Playwright Browser
         run: yarn playwright install --with-deps chromium
 
-      # 6. Execução dos testes de regressão
+      # 6. E2E contra a URL de preview + banco Supabase de preview (não produção)
       - name: Run E2E Regression tests
         run: yarn playwright test
         env:
           BASE_URL: ${{ needs.build-and-deploy.outputs.deployment-url }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_PREVIEW }}
           TESTDINO_TOKEN: ${{ secrets.TESTDINO_TOKEN }}
 
       # 7. Relatório de testes automatizados
@@ -131,18 +132,42 @@ jobs:
           name: playwright-report
           path: playwright-report
 
-  promote:
-    name: Promote to Production
+  # Tarefa 4 (Caminho B): novo build de Production.
+  # VITE_* são strings no bundle; promover o artefato de preview manteria o Supabase de preview em produção.
+  deploy-production:
+    name: Build & Deploy Production
     needs: [build-and-deploy, e2e-tests]
     runs-on: ubuntu-latest
     outputs:
-      deployment-url: ${{ needs.e2e-tests.outputs.deployment-url }}
+      deployment-url: ${{ steps.deploy.outputs.deployment-url }}
 
     steps:
-      # 1. Vercel promote
-      - name: Vercel promote
-        run: | 
-          npx vercel@latest promote ${{ needs.build-and-deploy.outputs.deployment-url }} \
-          --token=$VERCEL_TOKEN \
-          --scope=$VERCEL_SCOPE \
-          --yes
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          package-manager-cache: false
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install
+
+      # Baixa VITE_SUPABASE_* do ambiente Production (Supabase de produção)
+      - name: Pull Vercel production config
+        run: yarn vercel pull --yes --environment=production --token=$VERCEL_TOKEN --scope=$VERCEL_SCOPE
+
+      # Novo bundle com variáveis de produção embutidas
+      - name: Build Vercel production
+        run: yarn vercel build --token=$VERCEL_TOKEN
+
+      # Publica em produção (domínio de prod)
+      - name: Deploy Production
+        id: deploy
+        run: |
+          URL=$(yarn --silent vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN --scope=$VERCEL_SCOPE)
+          echo "deployment-url=${URL}" >> "$GITHUB_OUTPUT"
