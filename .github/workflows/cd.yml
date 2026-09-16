@@ -1,5 +1,5 @@
-# Continuous Deployment — unit tests → preview (Supabase preview) → E2E → produção (rebuild com VITE_* de Production).
-# Tarefa 4: não promovemos o artefato de preview. VITE_* são embutidas no build; produção exige novo build com env Production.
+# Continuous Integration — executa testes unitários (Vitest) em push na main.
+# Estrutura pronta para expansão futura (novos jobs: lint, e2e, etc.).
 
 name: Continuous Deployment
 
@@ -132,7 +132,6 @@ jobs:
           name: playwright-report
           path: playwright-report
 
-  # Tarefa 4 (Caminho B): novo build de Production.
   # VITE_* são strings no bundle; promover o artefato de preview manteria o Supabase de preview em produção.
   deploy-production:
     name: Build & Deploy Production
