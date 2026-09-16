@@ -7,7 +7,7 @@
 Após os E2E passarem no preview, o job `deploy-production` faz:
 
 1. `vercel pull --environment=production`
-2. `vercel build` (bundle com `VITE_*` de **produção**)
+2. `vercel build --prod` (bundle com `VITE_*` de **produção**; sem `--prod` o artefato fica marcado como preview)
 3. `vercel deploy --prebuilt --prod`
 
 Assim produção sempre usa o Supabase de produção, independentemente do build de preview.

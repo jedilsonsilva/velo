@@ -160,9 +160,9 @@ jobs:
       - name: Pull Vercel production config
         run: yarn vercel pull --yes --environment=production --token=$VERCEL_TOKEN --scope=$VERCEL_SCOPE
 
-      # Novo bundle com variáveis de produção embutidas
+      # Novo bundle com target production (vercel build sem --prod gera preview)
       - name: Build Vercel production
-        run: yarn vercel build --token=$VERCEL_TOKEN
+        run: yarn vercel build --prod --token=$VERCEL_TOKEN
 
       # Publica em produção (domínio de prod)
       - name: Deploy Production
